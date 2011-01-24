@@ -6,7 +6,7 @@ Created on 24.01.2011
 '''
 
 import yapgvb, docx, os
-from docx import heading, paragraph, picture, search, replace, pagebreak
+from docx import table, heading, paragraph, picture, search, replace, pagebreak
 if __name__ == '__main__':        
     
     A = [[0,1,1,1,0,1,],
@@ -21,13 +21,15 @@ if __name__ == '__main__':
     node=[]
     # Number of verticies
     n = len(A)
-    # Numver of edges 
+    # Number of edges 
     r = 0
-    # Create ba
+
+    # Create nodes
     for i in range(n):
         node.append(graph.add_node())
         node[i].label="X"+str(i+1)
-  
+ 
+    # Draw a basic graph image 
     for i in range(n):
         for j in range(i,n):
             if (A[i][j]==1):
@@ -45,16 +47,37 @@ if __name__ == '__main__':
     docbody = document.xpath('/w:document/w:body', namespaces=docx.nsprefixes)[0]
    
     docbody.append(heading(u'''6. Найти инварианты графа, заданного матрицей смежности ''',1)  )   
+    
+    # Create and insert basic table containing input info
+    Table_Basic=[]
+    for i in range(n+1):
+        Table_Basic.append([])
+        for j in range(n+1):
+            Table_Basic[i].append("")
+    for i in range(1,n+1):
+        Table_Basic[0][i] = "x"+str(i)
+        Table_Basic[i][0] = "x"+str(i)
+    for i in range(1,n+1):
+        for j in range(1, n+1):
+            Table_Basic[i][j]=str(A[i-1][j-1])        
+    docbody.append(table(Table_Basic,False,borders={'all':{'color':'auto','space':1,'sz':1}}))
+       
+    docbody.append(heading(u'Решение:',2))
     docbody.append(paragraph(u'Согласно отношениям смежности, изобразим граф:'))
+    
+    # Insert an image of graph
     relationships,picpara = picture(relationships,'graph.png','',200,200)
     docbody.append(picpara)
 
-    docbody.append(heading(u'Количество вершин  n = %i'%(n),2))
-    docbody.append(heading(u'Количество ребер r = %i'%(r),2))
+    docbody.append(heading(u'1. Количество вершин  n = %i'%(n),2))
+    
+    docbody.append(heading(u'2. Количество ребер r = %i'%(r),2))
+    
     f = 2-n+r
-    docbody.append(heading(u'Количество граней f = %i'%(f),2))
+    docbody.append(heading(u'3. Количество граней f = %i'%(f),2))
     docbody.append(paragraph('n-r+f = 2'))
     docbody.append(paragraph('f = 2-n+r = 2-6+11 = 7'))
+    
     
     """
     ## Some examples of working with docx module
